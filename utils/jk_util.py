@@ -1,0 +1,67 @@
+from utils.http_sender import *
+import yaml
+
+map = {} # read_config("config.yaml", "COMMON")
+
+def jk_room_lights_toggle():
+    send_buzzer_request(0.1, 0.05, 3000, 3)
+    send_lcd_screen_request_with_time("JK Lights")
+    # send_rf_signal(SECURITY_UNLOCK_CODE)
+    send_ir_sender_request("KEY_POWER")
+    send_rf_sender_request(map.get("LIGHT_JAVED_ROOM"))
+    time.sleep(5)
+
+
+def water_motor_on():
+    for x in range(0, 10):
+        send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_OFF"))
+
+    time.sleep(2)
+    send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_ON"))
+
+
+def outdoor_lights_toggle():
+    send_buzzer_request(2, 0.05, 1000, 1)
+    send_lcd_screen_request_with_time("Outdoor Lights")
+
+    send_rf_signal_and_sleep(map.get("LIGHT_GARDEN"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GATE"))
+    send_rf_signal_and_sleep(map.get("LIGHT_PARKING"))
+    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GEEZER"))
+    send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR"))
+
+
+def send_rf_signal_and_sleep(signal, duration=0.5):
+    from components.rf_transmitter import *
+    send_rf_signal(signal)
+    time.sleep(duration)
+
+
+def send_lcd_screen_request_with_time(message):
+    now = get_current_time()
+    send_lcd_screen_request(now + "\n" + message)
+
+
+def read_config(filename, categoryName):
+    map = {}
+    stream = open("config.yaml", "r")
+    docs = yaml.load_all(stream)
+    for doc in docs:
+        for k, v in doc.items():
+            if k == categoryName:
+                return parse_yaml(v)
+
+    return map
+
+
+def parse_yaml(docs):
+    docMap = {}
+    for k, v in docs.items():
+        docMap[k] = v
+    return docMap
+
+# if __name__ == "__main__":
+# send_lcd_screen_request("How are you?")
+# send_buzzer_request(0.25, 0.05, 5000, 10)
+# send_rf_sender_request("1488996 1 450")

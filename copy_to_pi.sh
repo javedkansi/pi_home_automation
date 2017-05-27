@@ -1,0 +1,1 @@
+scp -r * pi@192.168.1.60:~/pi_home_automation
