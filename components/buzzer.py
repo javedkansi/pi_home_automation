@@ -7,6 +7,7 @@ import sys,os
 sys.path.append(os.getcwd())
 
 from utils.jk_util import *
+from utils.http_server import *
 
 # read config file
 map = read_config("config.yaml", "IR_TRANSMITTER")
@@ -48,4 +49,4 @@ def buzzer_dual_beep():
 
 
 if __name__ == "__main__":
-    utils.jk_util.run_http_server(handler_class=BuzzerServer, port=map.get("SERVER_PORT"))
+    run_http_server(handler_class=BuzzerServer, port=map.get("SERVER_PORT"))

@@ -14,6 +14,7 @@ from utils.http_server import *
 # read config file
 rfCodeMappings = read_config("config.yaml", "RF_CODE_MAPPINGS")
 map = read_config("config.yaml", "RF_RECEIVER")
+commonMap = read_config("config.yaml", "COMMON")
 
 continue_reading_rf = True
 jkRoomLights = True
@@ -73,7 +74,7 @@ def listen_to_rf_signals(pin):
 
                     if v == "JK Room Motion" and jkRoomLights == False:
                         logging.warning("Motion detected and lights are off. Turning them on...")
-                        send_rf_sender_request(LIGHT_JAVED_ROOM)
+                        send_rf_sender_request(commonMap.get("LIGHT_JAVED_ROOM"))
                         jkRoomLights = not jkRoomLights
 
                     send_lcd_screen_request(now + "\n" + v)
