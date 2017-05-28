@@ -1,7 +1,6 @@
 from utils.http_sender import *
+import time
 import yaml
-
-map = {} # read_config("config.yaml", "COMMON")
 
 def jk_room_lights_toggle():
     send_buzzer_request(0.1, 0.05, 3000, 3)
@@ -60,6 +59,9 @@ def parse_yaml(docs):
     for k, v in docs.items():
         docMap[k] = v
     return docMap
+
+
+map = read_config("config.yaml", "COMMON")
 
 # if __name__ == "__main__":
 # send_lcd_screen_request("How are you?")

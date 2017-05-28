@@ -7,6 +7,9 @@ sys.path.append(os.getcwd())
 
 from utils.jk_util import *
 
+# read config file
+map = read_config("config.yaml", "MOBILE")
+
 logging.basicConfig(filename='log/application.log', filemode='a', format='%(asctime)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.WARNING)
 
@@ -17,7 +20,7 @@ def detect_mobile():
 
     while True:
         time.sleep(1)
-        p = subprocess.Popen("arp-scan -l | grep 00:34:da:55:72:9e", stdout=subprocess.PIPE, shell=True)
+        p = subprocess.Popen(map.get("ARP_SCAN_COMMAND"), stdout=subprocess.PIPE, shell=True)
         (output, err) = p.communicate()
         p_status = p.wait()
 
@@ -41,20 +44,9 @@ def detect_mobile():
             isMobileOnNetwork = 1
             logging.warning("Mobile device detected on the wifi network...")
 
-            # mobile detected
-            # if isMobileOnNetwork == 0 or isMobileOnNetwork == -1 or check_ping() == "Network Active":
-        #	isMobileOnNetwork = 1
-        #	logging.warning("Mobile device detected on the wifi network...")
-
-
-        # mobile not detected
-        # if (isMobileOnNetwork == 1 or isMobileOnNetwork == -1) and notDetectedCount >= 10:
-        #	isMobileOnNetwork = 0
-        #	logging.warning("Mobile device NOT connected to the wifi network...")
-
 
 def check_ping():
-    sHost = "192.168.1.198"
+    sHost = map.get("IP_ADDRESS")
     try:
         output = subprocess.check_output("ping -c 1 " + sHost, shell=True)
     except Exception, e:

@@ -48,5 +48,6 @@ COMMON:
   SOCKET_WATER_MOTOR_OFF: "15080663 1 312"
 
 # test
-Test:
-  TestSub1: "Test sub 1 value"
+MOBILE:
+  IP_ADDRESS: "192.168.1.198"
+  ARP_SCAN_COMMAND: "arp-scan -l | grep 00:34:da:55:72:9e"
