@@ -10,3 +10,4 @@ kill -9 $(ps aux | grep '[p]ython /home/pi/pi_home_automation/components/ir_tran
 kill -9 $(ps aux | grep '[p]ython /home/pi/pi_home_automation/components/rf_receiver.py' | awk '{print $2}') &>> /home/pi/pi_home_automation/log/application.log
 kill -9 $(ps aux | grep '[p]ython /home/pi/pi_home_automation/components/rfid_listener.py' | awk '{print $2}') &>> /home/pi/pi_home_automation/log/application.log
 kill -9 $(ps aux | grep '[p]ython /home/pi/pi_home_automation/mobile/mobile_detector.py' | awk '{print $2}') &>> /home/pi/pi_home_automation/log/application.log
+kill -9 $(ps aux | grep '[p]ython /home/pi/pi_home_automation/scheduler/scheduler.py' | awk '{print $2}') &>> /home/pi/pi_home_automation/log/application.log
