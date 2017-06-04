@@ -50,8 +50,8 @@ def sunset_sunrise_job_scheduler():
     if lightsOffJob is not None:
         scheduler.remove_job('Lights On')
 
-    lightsOffJob = scheduler.add_job(toggle_lights, 'date', run_date=lightsOffTime, id='Lights Off')
-    lightsOnJob = scheduler.add_job(toggle_lights, 'date', run_date=lightsOnTime, id='Lights On')
+    lightsOffJob = scheduler.add_job(toggle_lights, 'cron', hour=lightsOffTime.hour, minute=lightsOffTime.minute, id='Lights Off')
+    lightsOnJob = scheduler.add_job(toggle_lights, 'cron', hour=lightsOnTime.hour, minute=lightsOnTime.minute, id='Lights On')
 
     scheduler.print_jobs()
 

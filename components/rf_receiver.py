@@ -77,7 +77,7 @@ def listen_to_rf_signals(pin):
                         send_rf_sender_request(commonMap.get("LIGHT_JAVED_ROOM"))
                         jkRoomLights = not jkRoomLights
 
-                    send_lcd_screen_request(now + "\n" + v)
+                    # send_lcd_screen_request(now + "\n" + v)
                     logging.warning(v)
                     send_buzzer_request(0.08, 0.03, 3000, 3)
                     # time.sleep(1)
