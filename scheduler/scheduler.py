@@ -1,6 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 from dateutil import parser
+import logging
 import datetime as dt
 import requests
 import pytz
@@ -10,17 +11,24 @@ sys.path.append(os.getcwd())
 
 from utils.jk_util import *
 
+# read config file
+map = read_config("config.yaml", "SCHEDULER")
+
+logging.basicConfig(filename='log/application.log', filemode='a', format='%(asctime)s %(message)s',
+                    datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.WARNING)
 
 lightsOffJob = None
 lightsOnJob = None
 
 
 def toggle_lights():
-    print "Lights toggled..."
+    logging.warning("Lights toggled...")
     outdoor_lights_toggle()
 
 
 def sunset_sunrise_job_scheduler():
+    logging.warning("Checking sunset/sunrise time to schedule jobs...")
+
     response = requests.get('https://api.sunrise-sunset.org/json?lat=33.725699&lng=73.073496&date=today')
     data = response.json()
 
@@ -38,8 +46,8 @@ def sunset_sunrise_job_scheduler():
 
     send_lcd_screen_request("SR: " + sunrise.strftime("%H:%M:%S") + "\nSS: " + sunset.strftime("%H:%M:%S"))
 
-    lightsOffTime = sunrise - dt.timedelta(minutes=10)
-    lightsOnTime = sunset - dt.timedelta(minutes=10)
+    lightsOffTime = sunrise - dt.timedelta(minutes=map.get("TIME_BEFORE_SUNRISE"))
+    lightsOnTime = sunset - dt.timedelta(minutes=map.get("TIME_BEFORE_SUNSET"))
 
     global lightsOffJob
     global lightsOnJob
@@ -54,6 +62,8 @@ def sunset_sunrise_job_scheduler():
     lightsOnJob = scheduler.add_job(toggle_lights, 'cron', hour=lightsOnTime.hour, minute=lightsOnTime.minute, id='Lights On')
 
     scheduler.print_jobs()
+    logging.warning("Lights will be turned off at: " + str(lightsOffTime.hour) + ":" + str(lightsOffTime.minute));
+    logging.warning("Lights will be turned on at: " + str(lightsOnTime.hour) + ":" + str(lightsOnTime.minute));
 
 
 scheduler = BlockingScheduler()
