@@ -51,7 +51,7 @@ def wait_for_rfid_input():
                 jk_room_lights_toggle()
 
             elif cardUID == map.get("OUTDOOR_LIGHTS_TOGGLE_ID"):
-                outdoor_lights_toggle()
+                lights_on()
 
             else:
                 # Print a two line message

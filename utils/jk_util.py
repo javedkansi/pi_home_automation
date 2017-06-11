@@ -19,16 +19,34 @@ def water_motor_on():
     send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_ON"))
 
 
-def outdoor_lights_toggle():
+def lights_on():
     send_buzzer_request(2, 0.05, 1000, 1)
     send_lcd_screen_request_with_time("Outdoor Lights")
 
-    send_rf_signal_and_sleep(map.get("LIGHT_GARDEN"))
-    send_rf_signal_and_sleep(map.get("LIGHT_GATE"))
-    send_rf_signal_and_sleep(map.get("LIGHT_PARKING"))
-    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR"))
-    send_rf_signal_and_sleep(map.get("LIGHT_GEEZER"))
-    send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR"))
+    send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_DOWNSTAIRS_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_UPSTAIRS_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_KITCHEN_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GARDEN_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GATE_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_PARKING_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_ON"))
+    send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_ON"))
+
+
+def lights_off():
+    send_buzzer_request(2, 0.05, 1000, 1)
+    send_lcd_screen_request_with_time("Outdoor Lights")
+
+    send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_DOWNSTAIRS_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_UPSTAIRS_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_KITCHEN_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GARDEN_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GATE_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_PARKING_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_OFF"))
+    send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_OFF"))
 
 
 def send_rf_signal_and_sleep(signal, duration=0.5):

@@ -21,9 +21,14 @@ lightsOffJob = None
 lightsOnJob = None
 
 
-def toggle_lights():
-    logging.warning("Lights toggled...")
-    outdoor_lights_toggle()
+def turn_lights_on():
+    logging.warning("Turning lights on...")
+    lights_on()
+
+
+def turn_lights_off():
+    logging.warning("Turning lights off...")
+    lights_off()
 
 
 def sunset_sunrise_job_scheduler():
@@ -58,8 +63,8 @@ def sunset_sunrise_job_scheduler():
     if lightsOffJob is not None:
         scheduler.remove_job('Lights On')
 
-    lightsOffJob = scheduler.add_job(toggle_lights, 'cron', hour=lightsOffTime.hour, minute=lightsOffTime.minute, id='Lights Off')
-    lightsOnJob = scheduler.add_job(toggle_lights, 'cron', hour=lightsOnTime.hour, minute=lightsOnTime.minute, id='Lights On')
+    lightsOffJob = scheduler.add_job(turn_lights_off, 'cron', hour=lightsOffTime.hour, minute=lightsOffTime.minute, second='0,25,50', id='Lights Off')
+    lightsOnJob = scheduler.add_job(turn_lights_on, 'cron', hour=lightsOnTime.hour, minute=lightsOnTime.minute, second='0,25,50', id='Lights On')
 
     scheduler.print_jobs()
     logging.warning("Lights will be turned off at: " + str(lightsOffTime.hour) + ":" + str(lightsOffTime.minute));
