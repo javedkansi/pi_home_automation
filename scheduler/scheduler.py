@@ -31,6 +31,16 @@ def turn_lights_off():
     lights_off()
 
 
+def turn_water_motor_on():
+    logging.warning("Turning the water motor on...")
+    water_motor_on()
+
+
+def turn_water_motor_off():
+    logging.warning("Turning the water motor off...")
+    water_motor_off()
+
+
 def sunset_sunrise_job_scheduler():
     logging.warning("Checking sunset/sunrise time to schedule jobs...")
 
@@ -72,7 +82,17 @@ def sunset_sunrise_job_scheduler():
 
 
 scheduler = BlockingScheduler()
-job = scheduler.add_job(sunset_sunrise_job_scheduler, 'cron', hour=12, id='Job Scheduler')
 
+# job to schedule lights on/off job on a daily basis based on sunrise and sunset
+lightsSchedulingJob = scheduler.add_job(sunset_sunrise_job_scheduler, 'cron', hour=12, id='Lights Scheduler')
+
+# water motor off hourly job
+hourlyWaterMotorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour='*/1', minute=5, id='Hourly water motor off')
+
+# water motor job every 3 hours for 5mins
+waterMotorOnJob = scheduler.add_job(turn_water_motor_on, 'cron', hour='1,5,9,13,17,21', minute=15, id='Water motor on job')
+waterMotorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour='1,5,9,13,17,21', minute=20, id='Water motor off job')
+
+# run the job once to schedule after a restart
 sunset_sunrise_job_scheduler()
 scheduler.start()

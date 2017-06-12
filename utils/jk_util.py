@@ -2,7 +2,8 @@ from utils.http_sender import *
 import time
 import yaml
 
-
+outdoorLightsStatus = 0;
+jkRoomLightsStatus = 1;
 
 
 def jk_room_lights_toggle():
@@ -10,16 +11,27 @@ def jk_room_lights_toggle():
     send_lcd_screen_request_with_time("JK Lights")
     # send_rf_signal(SECURITY_UNLOCK_CODE)
     send_ir_sender_request("KEY_POWER")
-    send_rf_sender_request(map.get("LIGHT_JAVED_ROOM_ON"))
+
+    if jkRoomLightsStatus == 0:
+        send_rf_sender_request(map.get("LIGHT_JAVED_ROOM_ON"))
+    else:
+        send_rf_sender_request(map.get("LIGHT_JAVED_ROOM_OFF"))
+
     time.sleep(5)
 
 
 def water_motor_on():
-    for x in range(0, 10):
-        send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_OFF"))
+    # incase if learning is required for the controller
+    water_motor_off()
 
     time.sleep(2)
     send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_ON"))
+
+
+def water_motor_off():
+    for x in range(0, 5):
+        send_rf_sender_request(map.get("SOCKET_WATER_MOTOR_OFF"))
+        time.sleep(0.5)
 
 
 def lights_on():
@@ -35,6 +47,9 @@ def lights_on():
     send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_ON"))
 
+    global outdoorLightsStatus;
+    outdoorLightsStatus = 1;
+
 
 def lights_off():
     send_buzzer_request(2, 0.05, 1000, 1)
@@ -48,6 +63,9 @@ def lights_off():
     send_rf_signal_and_sleep(map.get("LIGHT_PARKING_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_OFF"))
+
+    global outdoorLightsStatus;
+    outdoorLightsStatus = 0;
 
 
 def send_rf_signal_and_sleep(signal, duration=0.5):
