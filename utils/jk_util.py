@@ -2,12 +2,15 @@ from utils.http_sender import *
 import time
 import yaml
 
+
+
+
 def jk_room_lights_toggle():
     send_buzzer_request(0.1, 0.05, 3000, 3)
     send_lcd_screen_request_with_time("JK Lights")
     # send_rf_signal(SECURITY_UNLOCK_CODE)
     send_ir_sender_request("KEY_POWER")
-    send_rf_sender_request(map.get("LIGHT_JAVED_ROOM"))
+    send_rf_sender_request(map.get("LIGHT_JAVED_ROOM_ON"))
     time.sleep(5)
 
 
@@ -29,7 +32,6 @@ def lights_on():
     send_rf_signal_and_sleep(map.get("LIGHT_GARDEN_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_GATE_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_PARKING_ON"))
-    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_ON"))
 
@@ -44,7 +46,6 @@ def lights_off():
     send_rf_signal_and_sleep(map.get("LIGHT_GARDEN_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_GATE_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_PARKING_OFF"))
-    send_rf_signal_and_sleep(map.get("LIGHT_MAIN_DOOR_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_GEEZER_OFF"))
     send_rf_signal_and_sleep(map.get("LIGHT_WATER_MOTOR_OFF"))
 
