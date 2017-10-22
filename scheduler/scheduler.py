@@ -95,7 +95,7 @@ def check_lights_with_current_time():
     # check the current time and determine whether the lights should be on
     # at this time or they should be off and execute appropriate action based on that
     if (currenttime.hour > lightsOnTime.hour or (currenttime.hour == lightsOnTime.minute and currenttime.minute >= lightsOnTime.minute)) \
-            or (currenttime.hour < lightsOffTime.hour (currenttime.hour == lightsOffTime.hour and currenttime.minute < lightsOffTime.minute)):
+            or (currenttime.hour < lightsOffTime.hour or (currenttime.hour == lightsOffTime.hour and currenttime.minute < lightsOffTime.minute)):
         logging.warning("Turning lights on based on current time...")
         turn_lights_on()
     else:
