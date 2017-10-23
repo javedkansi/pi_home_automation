@@ -4,6 +4,7 @@ from dateutil import parser
 import logging
 import datetime as dt
 import requests
+import time
 import pytz
 
 import sys,os
@@ -78,12 +79,14 @@ def turn_water_motor_on():
 def run_hourly_job():
     logging.warning("Running hourly job...")
 
+    # turn water motor off on hourly basis
+    turn_water_motor_off()
+
+    time.sleep(5)
+
     # check the current time and determine whether the lights should be on
     # at this time or they should be off and execute appropriate action based on that
     check_lights_with_current_time()
-
-    # turn water motor off on hourly basis
-    turn_water_motor_off()
 
     logging.warning("Hourly job executed...")
 
