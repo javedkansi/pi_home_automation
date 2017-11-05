@@ -22,12 +22,14 @@ logging.basicConfig(filename='log/application.log', filemode='a', format='%(asct
 
 lightsOffJob = None
 lightsOnJob = None
+motorOffJob = None
 countToSkipMotorOn = 0
 sunriseTime = None
 sunsetTime = None
 lightsOffTime = None
 lightsOnTime = None
 lightsOnTime = None
+isWaterMotorOn = False
 
 
 class SchedulerServer(JKHttpHandler):
@@ -40,9 +42,37 @@ class SchedulerServer(JKHttpHandler):
         if params.get('test_motor_on'):
             turn_water_motor_on()
 
+        #########################################################
+        #####TURN ON WATER MOTOR WITH SCHEDULED OFF##############
+        #########################################################
+        # turn water motor on and turn it off after given time
+        if params.get('motor_on_for_duration'):
+            motorOnDuration = int(params.get('motor_on_for_duration')[0])
+            currenttime = datetime.datetime.now()
+            motorOffTime = currenttime + dt.timedelta(minutes=motorOnDuration)
+            global motorOffJob
+
+            if motorOffJob is not None:
+                scheduler.remove_job('Motor Off')
+
+            motorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour=motorOffTime.hour, minute=motorOffTime.minute,
+                                            second=motorOffTime.second, id='Motor Off')
+
+            turn_water_motor_on()
+            send_lcd_screen_request("Off: " + motorOffTime.strftime("%H:%M:%S"))
+
+        #########################################################
+        ####################TRACK################################
+        #########################################################
+        if params.get('track'):
+            currenttime = datetime.datetime.now().time()
+            send_lcd_screen_request("Track: " + currenttime.strftime("%H:%M:%S"))
+
+            send_rf_sender_request(map.get("SECURITY_UNLOCK_CODE"))
+
         # override the number of times 'motor on' event should be skipped
-        if params.get('skip_motor_on'):
-            countToSkipMotorOn = int(params.get('skip_motor_on')[0])
+        # if params.get('skip_motor_on'):
+        #     countToSkipMotorOn = int(params.get('skip_motor_on')[0])
 
         response = "Sunrise: " + sunriseTime.strftime("%H:%M:%S")
         response += "\nSunset: " + sunsetTime.strftime("%H:%M:%S")
@@ -52,6 +82,9 @@ class SchedulerServer(JKHttpHandler):
 
         self._set_headers()
         self.wfile.write(response)
+
+def test_function():
+    send_rf_sender_request(map.get("SECURITY_UNLOCK_CODE"))
 
 
 def turn_lights_on():
@@ -78,11 +111,14 @@ def turn_water_motor_on():
 
 def run_hourly_job():
     logging.warning("Running hourly job...")
+    global motorOffJob
 
     # turn water motor off on hourly basis
-    turn_water_motor_off()
-
-    time.sleep(5)
+    if motorOffJob is None:
+        turn_water_motor_off()
+        time.sleep(5)
+    else:
+        logging.warning("Skipping water motor off in hourly job as motor off is already scheduled")
 
     # check the current time and determine whether the lights should be on
     # at this time or they should be off and execute appropriate action based on that
@@ -109,6 +145,8 @@ def check_lights_with_current_time():
 def turn_water_motor_off():
     logging.warning("Turning the water motor off...")
     water_motor_off()
+    global motorOffJob
+    motorOffJob = None
 
 
 def sunset_sunrise_job_scheduler():
@@ -165,10 +203,8 @@ if __name__ == "__main__":
                                                id='Hourly water motor off')
 
     # water motor job every 4 hours for 5mins
-    waterMotorOnJob = scheduler.add_job(turn_water_motor_on, 'cron', hour='1,5,9,13,17,21', minute=15,
-                                        id='Water motor on job')
-    waterMotorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour='1,5,9,13,17,21', minute=20,
-                                         id='Water motor off job')
+    # waterMotorOnJob = scheduler.add_job(turn_water_motor_on, 'cron', hour='1,5,9,13,17,21', minute=15, id='Water motor on job')
+    # waterMotorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour='1,5,9,13,17,21', minute=20, id='Water motor off job')
 
     # run the job once to schedule after a restart
     sunset_sunrise_job_scheduler()
