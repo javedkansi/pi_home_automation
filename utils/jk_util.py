@@ -35,8 +35,8 @@ def water_motor_off():
 
 
 def lights_on():
-    send_buzzer_request(2, 0.05, 1000, 1)
-    send_lcd_screen_request_with_time("Outdoor Lights")
+    # send_buzzer_request(2, 0.05, 1000, 1)
+    # send_lcd_screen_request_with_time("Outdoor Lights")
 
     send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_DOWNSTAIRS_ON"))
     send_rf_signal_and_sleep(map.get("LIGHT_JAVED_INDOOR_UPSTAIRS_ON"))

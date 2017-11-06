@@ -4,6 +4,7 @@ from dateutil import parser
 import logging
 import datetime as dt
 import requests
+import traceback
 import time
 import pytz
 
@@ -35,6 +36,7 @@ isWaterMotorOn = False
 class SchedulerServer(JKHttpHandler):
     def do_GET(self):
         params = parse_query_params(self)
+        response = ""
 
         global countToSkipMotorOn
 
@@ -47,19 +49,27 @@ class SchedulerServer(JKHttpHandler):
         #########################################################
         # turn water motor on and turn it off after given time
         if params.get('motor_on_for_duration'):
-            motorOnDuration = int(params.get('motor_on_for_duration')[0])
-            currenttime = datetime.datetime.now()
-            motorOffTime = currenttime + dt.timedelta(minutes=motorOnDuration)
-            global motorOffJob
+            try:
+                motorOnDuration = int(params.get('motor_on_for_duration')[0])
+                currenttime = datetime.datetime.now()
+                motorOffTime = currenttime + dt.timedelta(minutes=motorOnDuration)
+                global motorOffJob
 
-            if motorOffJob is not None:
-                scheduler.remove_job('Motor Off')
+                try:
+                    scheduler.remove_job('Motor Off')
+                except:
+                    logging.warning("Scheduled job 'Motor Off' does not exist...")
 
-            motorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour=motorOffTime.hour, minute=motorOffTime.minute,
-                                            second=motorOffTime.second, id='Motor Off')
+                motorOffJob = scheduler.add_job(turn_water_motor_off, 'cron', hour=motorOffTime.hour, minute=motorOffTime.minute,
+                                                second=motorOffTime.second, id='Motor Off')
 
-            turn_water_motor_on()
-            send_lcd_screen_request("Off: " + motorOffTime.strftime("%H:%M:%S"))
+                turn_water_motor_on()
+                send_lcd_screen_request("Off: " + motorOffTime.strftime("%H:%M:%S"))
+            except:
+                logging.warning("Error in processing request")
+                logging.warning(traceback.format_exc())
+                response += "ERROR PROCESSING REQUEST\n"
+
 
         #########################################################
         ####################TRACK################################
@@ -74,7 +84,7 @@ class SchedulerServer(JKHttpHandler):
         # if params.get('skip_motor_on'):
         #     countToSkipMotorOn = int(params.get('skip_motor_on')[0])
 
-        response = "Sunrise: " + sunriseTime.strftime("%H:%M:%S")
+        response += "Sunrise: " + sunriseTime.strftime("%H:%M:%S")
         response += "\nSunset: " + sunsetTime.strftime("%H:%M:%S")
         response += "\nLights Off: " + lightsOffTime.strftime("%H:%M:%S")
         response += "\nLights On: " + lightsOnTime.strftime("%H:%M:%S")
