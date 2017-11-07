@@ -51,6 +51,8 @@ class SchedulerServer(JKHttpHandler):
         if params.get('motor_on_for_duration'):
             try:
                 motorOnDuration = int(params.get('motor_on_for_duration')[0])
+                logging.warning("Turning water motor on for " + str(motorOnDuration) + "mins. Going to schedule automatic off...")
+
                 currenttime = datetime.datetime.now()
                 motorOffTime = currenttime + dt.timedelta(minutes=motorOnDuration)
                 global motorOffJob
@@ -64,7 +66,7 @@ class SchedulerServer(JKHttpHandler):
                                                 second=motorOffTime.second, id='Motor Off')
 
                 turn_water_motor_on()
-                send_lcd_screen_request("Off: " + motorOffTime.strftime("%H:%M:%S"))
+                send_lcd_screen_request("On: " + currenttime.strftime("%H:%M:%S") + "\nOff: " + motorOffTime.strftime("%H:%M:%S"))
             except:
                 logging.warning("Error in processing request")
                 logging.warning(traceback.format_exc())
